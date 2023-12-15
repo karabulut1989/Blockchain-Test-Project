@@ -1,0 +1,23 @@
+//Hardhat Tests in soldiity
+
+// Test fixed price listing
+it("Should list an NFT for fixed price", async function () {
+    const [owner, alice] = await ethers.getSigners();
+
+    const MyNFT = await ethers.getContractFactory("MyNFT");
+    const myNFT = await MyNFT.deploy();
+    await myNFT.deployed();
+
+    const MyMarketplace = await ethers.getContractFactory("MyMarketplace");
+    const myMarketplace = await MyMarketplace.deploy(myNFT.address);
+    await myMarketplace.deployed();
+
+    const tokenId = 1;
+    await myNFT.connect(owner).mint(owner.address, tokenId);
+
+    const price = ethers.utils.parseEther("0.0001");
+    await myMarketplace.connect(owner).createFixedPriceListing(tokenId, price);
+
+    const listedPrice = await myMarketplace.fixedPriceListings(tokenId);
+    expect(listedPrice).to.equal(price);
+});
