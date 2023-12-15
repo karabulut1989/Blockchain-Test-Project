@@ -1,0 +1,32 @@
+//Node.js Backend
+//This Node.js script will interact with the deployed contracts using ethers.js.
+
+const { ethers } = require('ethers');
+const MyNFTABI = require('./artifacts/contracts/MyNFT.sol/MyNFT.json');
+const MyMarketplaceABI = require('./artifacts/contracts/MyMarketplace.sol/MyMarketplace.json');
+
+// Provider setup
+const provider = new ethers.providers.JsonRpcProvider('https://goerli.infura.io/v3/YOUR_INFURA_KEY');
+
+// Wallet setup
+const privateKey = 'YOUR_PRIVATE_KEY';
+const wallet = new ethers.Wallet(privateKey, provider);
+
+// Contract addresses
+const nftAddress = 'MY_NFT_CONTRACT_ADDRESS';
+const marketplaceAddress = 'MY_MARKETPLACE_CONTRACT_ADDRESS';
+
+// Contract instances
+const nftContract = new ethers.Contract(nftAddress, MyNFTABI.abi, wallet);
+const marketplaceContract = new ethers.Contract(marketplaceAddress, MyMarketplaceABI.abi, wallet);
+
+// Example function to mint an NFT
+async function mintNFT(to, tokenId) {
+    const tx = await nftContract.connect(wallet).mint(to, tokenId);
+    await tx.wait();
+    console.log(`NFT minted to address: ${to}`);
+}
+
+// Call functions to interact with contracts
+mintNFT('0xFbB28e9380B6657b4134329B47D9588aCfb8E33B', 1);
+// Implement other functions to interact with the marketplace
